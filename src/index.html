@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+  <link rel="stylesheet" href="./static/all.css">
+  <link href="https://fonts.googleapis.com/css?family=Roboto:100,200,300,400,500|Roboto+Mono" rel="stylesheet">
+  <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons">
+</head>
+
+<body style="overflow: hidden; background-color: rgba(0,0,0,0); margin: 0">
+  <div id="root"></div>
+</body>
+
+<script>window.exports = module.exports</script>
+<script type="text/tsx">
+import * as React from 'react';
+import * as ReactDOM from 'react-dom';
+import { AppContainer } from 'react-hot-loader';
+
+let render = () => {
+  const App = require('./components/App').default;
+  ReactDOM.render(<App />, document.getElementById('root'));
+}
+
+render();
+if (module.hot) { module.hot.accept(render); }
+</script>
+
+</html>
