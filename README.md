@@ -6,6 +6,14 @@ Yet another check generation & printing app written by electron react & typescri
 * **CUSTOMIZEABLE:** It is super easy to use `css` to customize your check.
 * **Download Once, Print Anywhere:** Print your check without visiting a Bank, without waiting, without paying.
 
+## Download
+
+For now only macOS bundle is provided, I am still trying to see how to do cross compling on macOS.
+
+Source code is cross-platform ready, feel free to compile yourself.
+
+[Latest Releases](https://github.com/DickyT/check-de-go/releases/tag/1.0.0)
+
 ## Screenshots
 
 <img width="1136" alt="Screen Shot 2019-03-30 at 5 52 53 AM" src="https://user-images.githubusercontent.com/4535844/55274646-bcfe1280-52b0-11e9-932d-ef0609ccd81b.png">
