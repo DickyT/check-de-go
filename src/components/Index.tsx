@@ -80,7 +80,7 @@ export default class Index extends React.Component<IIndexProps, IIndexState> {
       [name]: value,
     };
 
-    if (!newState.isPrePrinted) {
+    if (!this.state.isPrePrinted) {
       newState.amount = '';
       newState.payeeName = '　';
     }
@@ -279,7 +279,7 @@ export default class Index extends React.Component<IIndexProps, IIndexState> {
             <FormGroup>
               <TextField
                 label="Routing Number"
-                type="number"
+                type="text"
                 variant="outlined"
                 value={this.state.routingNumber}
                 onChange={this.inputChange('routingNumber')}
@@ -288,7 +288,7 @@ export default class Index extends React.Component<IIndexProps, IIndexState> {
             <FormGroup>
               <TextField
                 label="Account Number"
-                type="number"
+                type="text"
                 variant="outlined"
                 value={this.state.accountNumber}
                 onChange={this.inputChange('accountNumber')}

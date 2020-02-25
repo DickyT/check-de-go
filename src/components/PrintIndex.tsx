@@ -25,8 +25,8 @@ export function PrintContent({ isCheckFront, args }: IPrintIndexProps) {
   if (isCheckFront) {
     args.amount = parseFloat(args.amount);
     args.date = new Date(args.date);
-    args.routingNumber = parseInt(args.routingNumber);
-    args.accountNumber = parseInt(args.accountNumber);
+    args.routingNumber = args.routingNumber;
+    args.accountNumber = args.accountNumber;
     args.checkNumber = parseInt(args.checkNumber);
     return (
       <Check {...args!} scale={scale} />
