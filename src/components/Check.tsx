@@ -31,7 +31,7 @@ export default class Check extends React.Component<ICheckProps, ICheckState> {
     if (this.props.amount) {
       amount = parseFloat(this.props.amount.toFixed(2));
       const amountInt = parseInt(this.props.amount.toFixed(2), 10);
-      const amountDecimalNumbers = amount - amountInt;
+      const amountDecimalNumbers = (amount - amountInt).toFixed(2);
       const amountNumerator = parseInt((amountDecimalNumbers * 100).toString(), 10);
       amountEnglish = `${NumberToWords.toWords(amountInt)} AND ${amountNumerator}/100`;
       numbericAmountstyle = {};
