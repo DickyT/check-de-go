@@ -174,15 +174,15 @@
 
 .check .bank-account-info {
     font-family: 'MICR';
-    font-size: 80px;
-    line-height: 80px;
-    padding: 0 50px;
+    font-size: 65px;
+    line-height: 65px;
+    padding: 0 30px;
     border-radius: 10px;
     background-color: rgba(255,255,255,0.5);
 }
 
 .check .bank-account-info .routing-number {
-    margin-right: 100px;
+    margin-right: 50px;
 }
 
 .check .check-info,
