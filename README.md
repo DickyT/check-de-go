@@ -1,53 +1,46 @@
-# Check de Go [![GitHub license](https://img.shields.io/badge/license-GPL-blue.svg)](https://github.com/facebook/react/blob/master/LICENSE) [![PRs Welcome](https://img.shields.io/badge/PRs-welcome-brightgreen.svg)](https://reactjs.org/docs/how-to-contribute.html#your-first-pull-request)
+# Getting Started with Create React App
 
-Yet another check generation & printing app written by electron react & typescript.
+This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
 
-* **OPEN SOURCE and FREE:** This software is completely open source and **FREE**, and nobody will steal your senstive information.
-* **CUSTOMIZEABLE:** It is super easy to use `css` to customize your check.
-* **Download Once, Print Anywhere:** Print your check without visiting a Bank, without waiting, without paying.
+## Available Scripts
 
-## Download
+In the project directory, you can run:
 
-For now only macOS bundle is provided, I am still trying to see how to do cross compling on macOS.
+### `yarn start`
 
-Source code is cross-platform ready, feel free to compile yourself.
+Runs the app in the development mode.\
+Open [http://localhost:3000](http://localhost:3000) to view it in the browser.
 
-[Latest Releases](https://github.com/DickyT/check-de-go/releases/tag/1.0.0)
+The page will reload if you make edits.\
+You will also see any lint errors in the console.
 
-## Screenshots
+### `yarn test`
 
-<img width="1136" alt="Screen Shot 2019-03-30 at 5 52 53 AM" src="https://user-images.githubusercontent.com/4535844/55274646-bcfe1280-52b0-11e9-932d-ef0609ccd81b.png">
+Launches the test runner in the interactive watch mode.\
+See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
 
-The below check is generated using my [customized theme](https://gistcdn.githack.com/DickyT/a41f58ad4bc704d4791fff7b842a8539/raw/e168afec91b693ab580ef0ef2e74063d972a6be1/miku.css) which override the original background.
+### `yarn build`
 
-<img width="1652" alt="Screen Shot 2019-03-30 at 5 56 57 AM" src="https://user-images.githubusercontent.com/4535844/55274647-bcfe1280-52b0-11e9-9bbf-cbddbb0a00d7.png">
+Builds the app for production to the `build` folder.\
+It correctly bundles React in production mode and optimizes the build for the best performance.
 
-We also generate printer-friendly copies.
+The build is minified and the filenames include the hashes.\
+Your app is ready to be deployed!
 
-<a href="https://user-images.githubusercontent.com/4535844/55274668-136b5100-52b1-11e9-8bf4-b95f61c3bb35.png" target="_blank">Letter size ready-to-print PNG</a>
+See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
 
-## Customize your check
+### `yarn eject`
 
-[Theme megathread](https://github.com/DickyT/check-de-go/issues/1)
+**Note: this is a one-way operation. Once you `eject`, you can’t go back!**
 
-Our check comes with a [default stylesheet](https://github.com/DickyT/check-de-go/blob/master/src/static/all.css), you can override any stylesheet property which related to check rendering.
+If you aren’t satisfied with the build tool and configuration choices, you can `eject` at any time. This command will remove the single build dependency from your project.
 
-A sample css theme is attached below, this css theme overrides the original background.
+Instead, it will copy all the configuration files and the transitive dependencies (webpack, Babel, ESLint, etc) right into your project so you have full control over them. All of the commands except `eject` will still work, but they will point to the copied scripts so you can tweak them. At this point you’re on your own.
 
-```css
-.check {
-  background: url(https://www.ps4wallpapers.com/wp-content/uploads/2018/01/PS4Wallpapers.com_5a5c529019255_b271f9267d1cf955d326b25743c167db.png);
-}
-```
+You don’t have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn’t feel obligated to use this feature. However we understand that this tool wouldn’t be useful if you couldn’t customize it when you are ready for it.
 
-You can absolutely change the font, font-size, or even check size.
+## Learn More
 
-For your convenience, please clone the project, run the electron app with `npm run start`, a Chrome Dev Panel will be the best tool for you to create a customized theme.
+You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
 
-## Contributing
-
-We are always looking for contributions, whether it's through bug reports, code, feature request. Please submit everything through GitHub issue.
-
-## Credits
-
-App icon is from [Flaticon](https://www.flaticon.com/free-icon/cheque_1101564#term=cheque&page=2&position=39), author is [@itim2101](https://www.flaticon.com/authors/itim2101). Use under [Flaticon Basic License](https://file000.flaticon.com/downloads/license/license.pdf).
+To learn React, check out the [React documentation](https://reactjs.org/).
