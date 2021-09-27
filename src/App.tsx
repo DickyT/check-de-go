@@ -1,11 +1,10 @@
-import './App.css';
+import * as React from 'react'
+import './App.css'
 
-function App() {
+export default function App() {
   return (
-    <div className="App">
+    <main>
       12345
-    </div>
-  );
+    </main>
+  )
 }
-
-export default App;
