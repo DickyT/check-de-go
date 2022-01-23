@@ -1,10 +1,12 @@
-import * as React from 'react'
-import './App.css'
+import * as React from 'react';
+
+import CheckCanvas from './CheckCanvas';
+import './App.css';
 
 export default function App() {
   return (
     <main>
-      12345
+      <CheckCanvas />
     </main>
   )
 }
