@@ -9,7 +9,7 @@ import CheckCanvas, {
 import './PrintSettings.css';
 import { usePrevious } from './utils';
 
-type ExportMode = 'preview' | 'download';
+type ExportMode = 'preview' | 'print' | 'download';
 
 const PAPER_CHECK_WIDTH_INCH = 8;
 const PAPER_CHECK_HEIGHT_INCH = (PAPER_CHECK_WIDTH_INCH * CHECK_ORIGINAL_HEIGHT)
@@ -71,9 +71,12 @@ export default function PrintSettings({ renderOptions }: Props) {
             ? printSettings.filename
             : `Check_de_Go_${(new Date()).getTime()}.pdf`;
 
-          if (exportMode === 'preview') {
+          if (exportMode === 'preview' || exportMode === 'print') {
+            if (exportMode === 'print') {
+              doc.autoPrint();
+            }
             doc.output('dataurlnewwindow');
-          } else {
+          } else if (exportMode === 'download') {
             doc.save(exportFilename);
           }
         }
@@ -106,14 +109,21 @@ export default function PrintSettings({ renderOptions }: Props) {
             type="button"
             onClick={() => exportPDF('preview')}
           >
-            Preview / Print PDF
+            Preview File
+          </button>
+          <button
+            className="btn btn-primary btn-lg"
+            type="button"
+            onClick={() => exportPDF('print')}
+          >
+            Print File
           </button>
           <button
             className="btn btn-secondary btn-lg"
             type="button"
             onClick={() => exportPDF('download')}
           >
-            Download PDF
+            Download File
           </button>
         </div>
       </div>
