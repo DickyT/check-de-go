@@ -1,0 +1,17 @@
+.check-settings {
+  width: 100%;
+}
+  
+.check-settings > .row > div {
+  text-align: left;
+}
+
+.address-info input:nth-of-type(n+2) {
+  margin-top: 10px;
+}
+
+.bank-info-header a {
+  font-size: 13px;
+  margin-left: 10px;
+  cursor: pointer;
+}

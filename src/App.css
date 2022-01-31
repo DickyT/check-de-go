@@ -4,7 +4,15 @@
 }
 
 main {
+  width: 750px;
+  margin-right: auto;
+  margin-left: auto;
   text-align: center;
+}
+
+.app-header {
+  margin-top: 15px;
+  margin-bottom: 20px;
 }
 
 .loading {
@@ -30,12 +38,6 @@ main {
   font-size: 18px;
 }
 
-.github-badge {
-  position: absolute;
-  top: 10px;
-  right: 10px;
-}
-
 .home-logo {
   display: flex;
   flex-direction: row;
@@ -44,12 +46,30 @@ main {
   margin-bottom: 15px;
 }
 
+.home-logo .right-text {
+  display: flex;
+  flex-direction: column;
+  margin-left: 20px;
+  align-items: flex-start;
+}
+
 .home-logo span.title {
   margin: 0;
-  margin-left: 20px;
   font-family: 'Computo Monospace';
   font-size: 25px;
-  padding-top: 5px;
+}
+
+.home-logo .subtitle {
+  display: inline-flex;
+  align-items: center;
+}
+
+.home-logo .subtitle a {
+  display: inline-flex;
+}
+
+.github-badge {
+  margin-left: 10px;
 }
 
 .home-logo > .fas {
@@ -59,6 +79,12 @@ main {
 .main-content {
   display: flex;
   justify-content: center;
+  flex-direction: column;
+  align-items: center;
+}
+
+.main-content > hr {
+  width: 100%;
 }
 
 .check-canvas {

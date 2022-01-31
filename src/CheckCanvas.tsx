@@ -1,5 +1,4 @@
-import * as React from 'react';
-import {
+import React, {
   useCallback, useEffect, useRef, useImperativeHandle, useMemo,
 } from 'react';
 import * as NumberToWords from 'number-to-words';
@@ -7,8 +6,8 @@ import BigNumber from 'bignumber.js';
 
 import { usePromise } from './utils';
 
-const CHECK_WIDTH = 900;
-const CHECK_HEIGHT = 350;
+export const CHECK_ORIGINAL_WIDTH = 900;
+export const CHECK_ORIGINAL_HEIGHT = 350;
 
 const FONTS = [
   {
@@ -29,31 +28,38 @@ const FONTS = [
   },
 ].map(({ name, url }) => new FontFace(name, `url('${url}')`));
 
-interface CheckAddress {
+export interface AddressInfo {
   name: string;
   line1?: string;
   line2?: string;
   line3?: string;
 }
 
-interface Props {
-  // render settings
-  previewMode?: boolean;
-  scale?: number;
-  bg?: string;
-  logo?: string;
-  // check info
-  amount: BigNumber;
+export interface CheckInfo {
+  amount: string;
   issueDate: string;
   routingNumber: string;
   accountNumber: string;
   checkNumber: string;
   memo?: string;
-  senderAddress: CheckAddress;
-  receiverAddress: CheckAddress;
-  bankAddress?: CheckAddress;
+  senderAddress: AddressInfo;
+  receiverAddress: AddressInfo;
+  bankAddress: AddressInfo;
   expireDays?: number;
+  bg?: string;
+  logo?: string;
+}
+
+export interface CheckCanvasRef {
+  canvas: HTMLCanvasElement;
+  context: CanvasRenderingContext2D;
+}
+
+interface Props extends CheckInfo {
+  // render settings
   className?: string;
+  previewMode?: boolean;
+  scale?: number;
 }
 
 export default React.forwardRef(({
@@ -61,7 +67,7 @@ export default React.forwardRef(({
   scale = 1,
   bg,
   logo,
-  amount,
+  amount: amountFromProps,
   issueDate,
   routingNumber,
   accountNumber,
@@ -87,19 +93,20 @@ export default React.forwardRef(({
 
   const pixelRatio = previewMode ? window.devicePixelRatio : 1;
 
-  const width = unit(CHECK_WIDTH);
+  const width = unit(CHECK_ORIGINAL_WIDTH);
   const canvasWidth = width * pixelRatio;
 
-  const height = unit(CHECK_HEIGHT);
+  const height = unit(CHECK_ORIGINAL_HEIGHT);
   const canvasHeight = height * pixelRatio;
 
+  const amount = useMemo(() => new BigNumber(amountFromProps.length === 0 ? 0 : amountFromProps), [
+    amountFromProps,
+  ]);
+
   const refHandle = useMemo(() => () => ({
-    width,
-    height,
-    scale,
     canvas: canvasRef.current!,
     context: getContext(),
-  }), [getContext, height, scale, width]);
+  }), [getContext]);
   useImperativeHandle(ref, refHandle);
 
   useEffect(() => {
@@ -181,16 +188,16 @@ export default React.forwardRef(({
     ctx.textAlign = 'end';
     ctx.fillText(`** $${amount.toFormat()} **`, width - unit(30), unit(155));
 
-    if (bankAddress) {
-      ctx.font = `${unit(13)}px 'Spoqa Han Sans Neo Medium'`;
-      ctx.fillText(bankAddress.name, width - unit(30), unit(185));
+    ctx.font = `${unit(13)}px 'Spoqa Han Sans Neo Medium'`;
+    ctx.fillText(bankAddress.name, width - unit(30), unit(185));
 
-      ctx.font = `${unit(13)}px 'Spoqa Han Sans Neo Regular'`;
-      bankAddress.line1 != null
-        && ctx.fillText(bankAddress.line1, width - unit(30), unit(200));
-      bankAddress.line2 != null
-        && ctx.fillText(bankAddress.line2, width - unit(30), unit(215));
-    }
+    ctx.font = `${unit(13)}px 'Spoqa Han Sans Neo Regular'`;
+    bankAddress.line1 != null
+      && ctx.fillText(bankAddress.line1, width - unit(30), unit(200));
+    bankAddress.line2 != null
+      && ctx.fillText(bankAddress.line2, width - unit(30), unit(215));
+    bankAddress.line3 != null
+      && ctx.fillText(bankAddress.line3, width - unit(30), unit(230));
 
     ctx.textAlign = 'center';
     ctx.font = `${unit(13)}px 'Spoqa Han Sans Neo Regular'`;

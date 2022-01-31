@@ -1,9 +1,25 @@
 import useAwait from 'react-use-await';
+import {
+  useState, useEffect,
+} from 'react';
 
-// eslint-disable-next-line import/prefer-default-export
 export function usePromise<A extends any[], R>(
   promise: (..._fnArgs: A) => Promise<R>,
   ...args: A
 ): R {
   return useAwait(promise, args);
+}
+
+export function useDebounce<T>(value: T, delay?: number): T {
+  const [debouncedValue, setDebouncedValue] = useState<T>(value);
+
+  useEffect(() => {
+    const timer = setTimeout(() => setDebouncedValue(value), delay || 500);
+
+    return () => {
+      clearTimeout(timer);
+    };
+  }, [value, delay]);
+
+  return debouncedValue;
 }
