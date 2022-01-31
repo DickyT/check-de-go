@@ -1,1 +1,1 @@
-run="yarn dev"
+run="yarn serve"
