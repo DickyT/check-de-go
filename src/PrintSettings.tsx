@@ -7,6 +7,7 @@ import CheckCanvas, {
   CheckCanvasRef, CheckInfo, CHECK_ORIGINAL_HEIGHT, CHECK_ORIGINAL_WIDTH,
 } from './CheckCanvas';
 import './PrintSettings.css';
+import { usePrevious } from './utils';
 
 type ExportMode = 'preview' | 'download';
 
@@ -27,6 +28,7 @@ interface Props {
 
 export default function PrintSettings({ renderOptions }: Props) {
   const [exportRenderOptions, setExportRenderOptions] = useState<CheckInfo>();
+  const previousERO = usePrevious(exportRenderOptions);
 
   const [exportScale, setExportScale] = useState(1);
   const [exportMode, setExportMode] = useState<ExportMode>('preview');
@@ -47,35 +49,43 @@ export default function PrintSettings({ renderOptions }: Props) {
   }, [printSettings.dpi, renderOptions]);
 
   useLayoutEffect(() => {
-    setTimeout(() => {
-      const checkRef = checkRendererRef.current;
-      if (checkRef != null) {
-        const { canvas } = checkRef;
-        // eslint-disable-next-line new-cap
-        const doc = new jsPDF('p', 'in', [8.5, 11]);
+    if (previousERO !== exportRenderOptions) {
+      setTimeout(() => {
+        const checkRef = checkRendererRef.current;
+        if (checkRef != null) {
+          const { canvas } = checkRef;
+          // eslint-disable-next-line new-cap
+          const doc = new jsPDF('p', 'in', [8.5, 11]);
 
-        doc.addImage(canvas, 'png', 0.25, 0.5, PAPER_CHECK_WIDTH_INCH, PAPER_CHECK_HEIGHT_INCH);
-        if (printSettings.cuttingHelper) {
-          doc.setLineDashPattern([0.1], 2);
-          doc.setLineWidth(0.01);
-          doc.line(0, 0.5, 8.5, 0.5);
-          doc.line(0, 3.61, 8.5, 3.61);
-          doc.line(0.25, 0, 0.25, 11);
-          doc.line(8.5 - 0.25, 0, 8.5 - 0.25, 11);
+          doc.addImage(canvas, 'png', 0.25, 0.5, PAPER_CHECK_WIDTH_INCH, PAPER_CHECK_HEIGHT_INCH);
+          if (printSettings.cuttingHelper) {
+            doc.setLineDashPattern([0.1], 2);
+            doc.setLineWidth(0.01);
+            doc.line(0, 0.5, 8.5, 0.5);
+            doc.line(0, 3.61, 8.5, 3.61);
+            doc.line(0.25, 0, 0.25, 11);
+            doc.line(8.5 - 0.25, 0, 8.5 - 0.25, 11);
+          }
+
+          const exportFilename = printSettings.filename.length > 0
+            ? printSettings.filename
+            : `Check_de_Go_${(new Date()).getTime()}.pdf`;
+
+          if (exportMode === 'preview') {
+            doc.output('dataurlnewwindow');
+          } else {
+            doc.save(exportFilename);
+          }
         }
-
-        const exportFilename = printSettings.filename.length > 0
-          ? printSettings.filename
-          : `Check_de_Go_${(new Date()).getTime()}.pdf`;
-
-        if (exportMode === 'preview') {
-          doc.output('dataurlnewwindow');
-        } else {
-          doc.save(exportFilename);
-        }
-      }
-    }, 100);
-  }, [exportMode, exportRenderOptions, printSettings.cuttingHelper, printSettings.filename]);
+      }, 100);
+    }
+  }, [
+    exportMode,
+    exportRenderOptions,
+    previousERO,
+    printSettings.cuttingHelper,
+    printSettings.filename,
+  ]);
 
   return (
     <div className="check-settings">
@@ -83,7 +93,9 @@ export default function PrintSettings({ renderOptions }: Props) {
       <div className="alert alert-info" role="alert">
         Any feedbacks regarding the printing process?
         {' '}
-        <a href="https://github.com/DickyT/check-de-go/issues">Let us know</a>
+        <a href="https://github.com/DickyT/check-de-go/issues" target="_blank" rel="noreferrer">
+          Let us know
+        </a>
       </div>
       <div className="row g-3">
         <UserSettings value={printSettings} onChange={setPrintSettings} />
