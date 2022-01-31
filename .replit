@@ -1,1 +1,1 @@
-run="yarn serve"
+run="yarn run build && yarn run serve --port 3000"
