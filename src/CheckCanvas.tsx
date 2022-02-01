@@ -1,13 +1,10 @@
 import React, {
-  useCallback, useEffect, useRef, useImperativeHandle, useMemo,
+  useEffect, useMemo,
 } from 'react';
 import * as NumberToWords from 'number-to-words';
 import BigNumber from 'bignumber.js';
 
-import { usePromise } from './utils';
-
-export const CHECK_ORIGINAL_WIDTH = 900;
-export const CHECK_ORIGINAL_HEIGHT = 350;
+import { useCheckCanvas, usePromise } from './utils';
 
 const FONTS = [
   {
@@ -45,21 +42,19 @@ export interface CheckInfo {
   senderAddress: AddressInfo;
   receiverAddress: AddressInfo;
   bankAddress: AddressInfo;
-  expireDays?: number;
+  expireDays?: string;
   bg?: string;
   logo?: string;
 }
 
-export interface CheckCanvasRef {
-  canvas: HTMLCanvasElement;
-  context: CanvasRenderingContext2D;
-}
-
-interface Props extends CheckInfo {
-  // render settings
+export interface CheckCanvasBaseProps {
   className?: string;
   previewMode?: boolean;
   scale?: number;
+}
+
+interface Props extends CheckCanvasBaseProps, CheckInfo {
+
 }
 
 export default React.forwardRef(({
@@ -83,39 +78,29 @@ export default React.forwardRef(({
   const logoImg = usePromise(loadImg, logo);
   usePromise(loadFonts);
 
-  const canvasRef = useRef<HTMLCanvasElement>(null);
-
-  const unit = useCallback((val) => scale * val, [scale]);
-  const getContext = useCallback(() => {
-    const canvas = canvasRef.current;
-    return canvas!.getContext('2d')!;
-  }, []);
-
-  const pixelRatio = previewMode ? window.devicePixelRatio : 1;
-
-  const width = unit(CHECK_ORIGINAL_WIDTH);
-  const canvasWidth = width * pixelRatio;
-
-  const height = unit(CHECK_ORIGINAL_HEIGHT);
-  const canvasHeight = height * pixelRatio;
+  const {
+    canvasRef,
+    unit,
+    getContext,
+    width,
+    height,
+    canvasWidth,
+    canvasHeight,
+    resetCanvas,
+  } = useCheckCanvas({
+    ref,
+    scale,
+    previewMode,
+  });
 
   const amount = useMemo(() => new BigNumber(amountFromProps.length === 0 ? 0 : amountFromProps), [
     amountFromProps,
   ]);
 
-  const refHandle = useMemo(() => () => ({
-    canvas: canvasRef.current!,
-    context: getContext(),
-  }), [getContext]);
-  useImperativeHandle(ref, refHandle);
-
   useEffect(() => {
     const ctx = getContext();
 
-    ctx.setTransform(1, 0, 0, 1, 0, 0);
-    ctx.scale(pixelRatio, pixelRatio);
-
-    ctx.clearRect(0, 0, canvasWidth, canvasHeight);
+    resetCanvas();
 
     if (bgImg) {
       const bgImgRatio = width / bgImg.width;
@@ -306,7 +291,7 @@ export default React.forwardRef(({
     senderAddress.name,
     unit,
     width,
-    pixelRatio,
+    resetCanvas,
   ]);
 
   return (

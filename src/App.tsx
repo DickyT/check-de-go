@@ -5,6 +5,8 @@ import CheckSettings from './CheckSettings';
 import './App.css';
 import { useDebounce } from './utils';
 import PrintSettings from './PrintSettings';
+import BackSideSettings from './BackSideSettings';
+import CheckBackCanvas from './CheckBackCanvas';
 
 export default function App() {
   const [renderOptions, setRenderOptions] = useState<CheckInfo>({
@@ -32,7 +34,7 @@ export default function App() {
       line2: '',
       line3: '',
     },
-    expireDays: 180,
+    expireDays: '180',
     logo: 'https://i.imgur.com/vwqVHT3.png',
     bg: 'https://i.imgur.com/PrAofVk.png',
   });
@@ -64,7 +66,7 @@ export default function App() {
               </div>
             )}
           >
-            <div className="preview">
+            <div className="front-preview">
               <CheckCanvas
                 className="check-canvas"
                 scale={0.8}
@@ -74,6 +76,14 @@ export default function App() {
             </div>
             <hr />
             <CheckSettings value={renderOptions} onChange={setRenderOptions} />
+            <hr />
+            <CheckBackCanvas
+              className="check-back-canvas"
+              scale={0.8}
+              previewMode={true}
+            />
+            <hr />
+            <BackSideSettings />
             <hr />
             <PrintSettings renderOptions={renderOptions} />
           </React.Suspense>

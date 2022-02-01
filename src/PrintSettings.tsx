@@ -4,10 +4,10 @@ import React, {
 import { jsPDF } from 'jspdf';
 
 import CheckCanvas, {
-  CheckCanvasRef, CheckInfo, CHECK_ORIGINAL_HEIGHT, CHECK_ORIGINAL_WIDTH,
+  CheckCanvasRef, CheckInfo,
 } from './CheckCanvas';
 import './PrintSettings.css';
-import { usePrevious } from './utils';
+import { usePrevious, CHECK_ORIGINAL_HEIGHT, CHECK_ORIGINAL_WIDTH } from './utils';
 
 type ExportMode = 'preview' | 'print' | 'download';
 
@@ -17,9 +17,10 @@ const PAPER_CHECK_HEIGHT_INCH = (PAPER_CHECK_WIDTH_INCH * CHECK_ORIGINAL_HEIGHT)
 
 interface ExportSettings {
   paperType: string;
-  dpi: number;
-  cuttingHelper: boolean;
+  dpi: string;
+  topMargin: string;
   filename: string;
+  cuttingHelper: boolean;
 }
 
 interface Props {
@@ -35,15 +36,17 @@ export default function PrintSettings({ renderOptions }: Props) {
 
   const [printSettings, setPrintSettings] = useState<ExportSettings>({
     paperType: 'Letter',
-    dpi: 300,
-    cuttingHelper: true,
+    dpi: '300',
+    topMargin: '0.5',
     filename: '',
+    cuttingHelper: true,
   });
 
   const checkRendererRef = useRef<CheckCanvasRef>();
 
   const exportPDF = useCallback((mode: ExportMode) => {
-    setExportScale((PAPER_CHECK_WIDTH_INCH * printSettings.dpi) / CHECK_ORIGINAL_WIDTH);
+    const dpi = parseInt(printSettings.dpi, 10);
+    setExportScale((PAPER_CHECK_WIDTH_INCH * dpi) / CHECK_ORIGINAL_WIDTH);
     setExportMode(mode);
     setExportRenderOptions({ ...renderOptions });
   }, [printSettings.dpi, renderOptions]);
@@ -54,17 +57,29 @@ export default function PrintSettings({ renderOptions }: Props) {
         const checkRef = checkRendererRef.current;
         if (checkRef != null) {
           const { canvas } = checkRef;
-          // eslint-disable-next-line new-cap
-          const doc = new jsPDF('p', 'in', [8.5, 11]);
 
-          doc.addImage(canvas, 'png', 0.25, 0.5, PAPER_CHECK_WIDTH_INCH, PAPER_CHECK_HEIGHT_INCH);
+          const PAPER_WIDTH = 8.5;
+          const PAPER_HEIGHT = 11;
+
+          const xMargins = (PAPER_WIDTH - PAPER_CHECK_WIDTH_INCH) / 2;
+          const topMargin = parseFloat(printSettings.topMargin);
+
+          // eslint-disable-next-line new-cap
+          const doc = new jsPDF('p', 'in', [PAPER_WIDTH, PAPER_HEIGHT]);
+
+          doc.addImage(canvas, 'png', xMargins, topMargin, PAPER_CHECK_WIDTH_INCH, PAPER_CHECK_HEIGHT_INCH);
           if (printSettings.cuttingHelper) {
             doc.setLineDashPattern([0.1], 2);
             doc.setLineWidth(0.01);
-            doc.line(0, 0.5, 8.5, 0.5);
-            doc.line(0, 3.61, 8.5, 3.61);
-            doc.line(0.25, 0, 0.25, 11);
-            doc.line(8.5 - 0.25, 0, 8.5 - 0.25, 11);
+            doc.line(0, topMargin, PAPER_WIDTH, topMargin);
+            doc.line(
+              0,
+              topMargin + PAPER_CHECK_HEIGHT_INCH,
+              8.5,
+              topMargin + PAPER_CHECK_HEIGHT_INCH,
+            );
+            doc.line(xMargins, 0, xMargins, PAPER_HEIGHT);
+            doc.line(PAPER_WIDTH - xMargins, 0, PAPER_WIDTH - xMargins, PAPER_HEIGHT);
           }
 
           const exportFilename = printSettings.filename.length > 0
@@ -88,6 +103,7 @@ export default function PrintSettings({ renderOptions }: Props) {
     previousERO,
     printSettings.cuttingHelper,
     printSettings.filename,
+    printSettings.topMargin,
   ]);
 
   return (
@@ -192,7 +208,21 @@ function UserSettings({
           max={3600}
         />
       </div>
-      <div className="col-5">
+      <div className="col-2">
+        <label htmlFor="print-top-margin" className="form-label">Top Margin</label>
+        <input
+          type="number"
+          className="form-control"
+          id="print-top-margin"
+          placeholder="Top Margin"
+          value={value.topMargin}
+          onChange={e => onChange('topMargin', e)}
+          step={0.05}
+          min={0}
+          max={100}
+        />
+      </div>
+      <div className="col-4">
         <label htmlFor="print-filename" className="form-label">PDF Filename</label>
         <input
           type="text"
@@ -203,8 +233,8 @@ function UserSettings({
           onChange={e => onChange('filename', e)}
         />
       </div>
-      <div className="col-3">
-        <label htmlFor="print-cutter-helper" className="form-label">Cutter Helper Line</label>
+      <div className="col-2">
+        <label htmlFor="print-cutter-helper" className="form-label">Cutter Helper</label>
         <select
           className="form-control"
           id="print-cutter-helper"

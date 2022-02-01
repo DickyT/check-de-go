@@ -87,6 +87,7 @@ main {
   width: 100%;
 }
 
-.check-canvas {
+.check-canvas,
+.check-back-canvas {
   border: 1px solid #ececec;
 }

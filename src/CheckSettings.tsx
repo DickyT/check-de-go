@@ -69,6 +69,7 @@ export default function CheckSettings({
 
   return (
     <div className="check-settings">
+      <h6>Check Settings</h6>
       <div className="row g-3">
         <div className="col-3">
           <label htmlFor="amount" className="form-label">Amount</label>
