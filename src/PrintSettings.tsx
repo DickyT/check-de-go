@@ -4,10 +4,13 @@ import React, {
 import { jsPDF } from 'jspdf';
 
 import CheckCanvas, {
-  CheckCanvasRef, CheckInfo,
+  CheckInfo,
 } from './CheckCanvas';
 import './PrintSettings.css';
-import { usePrevious, CHECK_ORIGINAL_HEIGHT, CHECK_ORIGINAL_WIDTH } from './utils';
+import {
+  usePrevious, CHECK_ORIGINAL_HEIGHT, CHECK_ORIGINAL_WIDTH, CheckCanvasRef,
+} from './utils';
+import CheckBackCanvas from './CheckBackCanvas';
 
 type ExportMode = 'preview' | 'print' | 'download';
 
@@ -43,6 +46,7 @@ export default function PrintSettings({ renderOptions }: Props) {
   });
 
   const checkRendererRef = useRef<CheckCanvasRef>();
+  const backSideRendererRef = useRef<CheckCanvasRef>();
 
   const exportPDF = useCallback((mode: ExportMode) => {
     const dpi = parseInt(printSettings.dpi, 10);
@@ -54,9 +58,11 @@ export default function PrintSettings({ renderOptions }: Props) {
   useLayoutEffect(() => {
     if (previousERO !== exportRenderOptions) {
       setTimeout(() => {
-        const checkRef = checkRendererRef.current;
-        if (checkRef != null) {
-          const { canvas } = checkRef;
+        const checkFrontRef = checkRendererRef.current;
+        const checkBackRef = backSideRendererRef.current;
+        if (checkFrontRef != null && checkBackRef != null) {
+          const { canvas: frontCanvas } = checkFrontRef;
+          const { canvas: backCanvas } = checkBackRef;
 
           const PAPER_WIDTH = 8.5;
           const PAPER_HEIGHT = 11;
@@ -67,20 +73,26 @@ export default function PrintSettings({ renderOptions }: Props) {
           // eslint-disable-next-line new-cap
           const doc = new jsPDF('p', 'in', [PAPER_WIDTH, PAPER_HEIGHT]);
 
-          doc.addImage(canvas, 'png', xMargins, topMargin, PAPER_CHECK_WIDTH_INCH, PAPER_CHECK_HEIGHT_INCH);
-          if (printSettings.cuttingHelper) {
-            doc.setLineDashPattern([0.1], 2);
-            doc.setLineWidth(0.01);
-            doc.line(0, topMargin, PAPER_WIDTH, topMargin);
-            doc.line(
-              0,
-              topMargin + PAPER_CHECK_HEIGHT_INCH,
-              8.5,
-              topMargin + PAPER_CHECK_HEIGHT_INCH,
-            );
-            doc.line(xMargins, 0, xMargins, PAPER_HEIGHT);
-            doc.line(PAPER_WIDTH - xMargins, 0, PAPER_WIDTH - xMargins, PAPER_HEIGHT);
-          }
+          const printCanvas = (canvas: HTMLCanvasElement) => {
+            doc.addImage(canvas, 'png', xMargins, topMargin, PAPER_CHECK_WIDTH_INCH, PAPER_CHECK_HEIGHT_INCH);
+            if (printSettings.cuttingHelper) {
+              doc.setLineDashPattern([0.1], 2);
+              doc.setLineWidth(0.01);
+              doc.line(0, topMargin, PAPER_WIDTH, topMargin);
+              doc.line(
+                0,
+                topMargin + PAPER_CHECK_HEIGHT_INCH,
+                8.5,
+                topMargin + PAPER_CHECK_HEIGHT_INCH,
+              );
+              doc.line(xMargins, 0, xMargins, PAPER_HEIGHT);
+              doc.line(PAPER_WIDTH - xMargins, 0, PAPER_WIDTH - xMargins, PAPER_HEIGHT);
+            }
+          };
+
+          printCanvas(frontCanvas);
+          doc.addPage();
+          printCanvas(backCanvas);
 
           const exportFilename = printSettings.filename.length > 0
             ? printSettings.filename
@@ -90,12 +102,12 @@ export default function PrintSettings({ renderOptions }: Props) {
             if (exportMode === 'print') {
               doc.autoPrint();
             }
-            doc.output('dataurlnewwindow');
+            window.open(doc.output('bloburl'), '_blank');
           } else if (exportMode === 'download') {
             doc.save(exportFilename);
           }
         }
-      }, 100);
+      }, 250);
     }
   }, [
     exportMode,
@@ -144,13 +156,21 @@ export default function PrintSettings({ renderOptions }: Props) {
         </div>
       </div>
       {exportRenderOptions != null && (
-        <CheckCanvas
-          ref={checkRendererRef}
-          className="invisible-check"
-          previewMode={false}
-          scale={exportScale}
-          {...exportRenderOptions}
-        />
+        <>
+          <CheckCanvas
+            ref={checkRendererRef}
+            className="invisible-check"
+            previewMode={false}
+            scale={exportScale}
+            {...exportRenderOptions}
+          />
+          <CheckBackCanvas
+            ref={backSideRendererRef}
+            className="invisible-check"
+            previewMode={false}
+            scale={exportScale}
+          />
+        </>
       )}
     </div>
   );

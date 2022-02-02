@@ -47,6 +47,25 @@ export function usePrevious<T>(value: T): T | undefined {
   return ref.current;
 }
 
+const FONTS = [
+  {
+    name: 'MICR',
+    url: 'https://raw.githubusercontent.com/garily/check-de-go/master/src/static/micrenc.ttf',
+  },
+  {
+    name: 'Spoqa Han Sans Neo Regular',
+    url: 'https://cdnjs.cloudflare.com/ajax/libs/spoqa-han-sans/3.2.1/Subset/SpoqaHanSansNeo/SpoqaHanSansNeo-Regular.ttf',
+  },
+  {
+    name: 'Spoqa Han Sans Neo Medium',
+    url: 'https://cdnjs.cloudflare.com/ajax/libs/spoqa-han-sans/3.2.1/Subset/SpoqaHanSansNeo/SpoqaHanSansNeo-Medium.ttf',
+  },
+  {
+    name: 'Roboto Mono',
+    url: 'https://fonts.cdnfonts.com/s/16061/RobotoMono-Regular.woff',
+  },
+].map(({ name, url }) => new FontFace(name, `url('${url}')`));
+
 export const CHECK_ORIGINAL_WIDTH = 900;
 export const CHECK_ORIGINAL_HEIGHT = 350;
 
@@ -102,7 +121,9 @@ export function useCheckCanvas({
     ctx.setTransform(1, 0, 0, 1, 0, 0);
     ctx.scale(pixelRatio, pixelRatio);
     ctx.clearRect(0, 0, canvasWidth, canvasHeight);
-  }, [canvasHeight, canvasWidth, getContext, pixelRatio]);
+    ctx.fillStyle = 'white';
+    ctx.fillRect(0, 0, width, height);
+  }, [canvasHeight, canvasWidth, getContext, pixelRatio, width, height]);
 
   return {
     canvasRef,
@@ -114,4 +135,42 @@ export function useCheckCanvas({
     canvasHeight,
     resetCanvas,
   };
+}
+
+export function loadImg(url?: string): Promise<HTMLImageElement | undefined> {
+  return new Promise((resolve, reject) => {
+    if (url == null) {
+      resolve(undefined);
+      return;
+    }
+    const imgLoader = new Image();
+    imgLoader.crossOrigin = 'anonymous';
+    imgLoader.onload = () => resolve(imgLoader);
+    imgLoader.onerror = () => reject();
+    imgLoader.src = url;
+  });
+}
+
+export function loadFonts(): Promise<void> {
+  return new Promise((resolve, reject) => {
+    const loadedFonts = FONTS.reduce(
+      (acc, font) => acc + (font.status === 'loaded' ? 1 : 0),
+      0,
+    );
+    if (loadedFonts < FONTS.length) {
+      let loadedCount = 0;
+      FONTS.forEach((fontFace) => fontFace
+        .load()
+        .then((font) => {
+          document.fonts.add(font);
+          loadedCount += 1;
+          if (loadedCount === FONTS.length) {
+            resolve();
+          }
+        })
+        .catch(() => reject()));
+    } else {
+      resolve();
+    }
+  });
 }
