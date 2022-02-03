@@ -73,9 +73,9 @@ export default function PrintSettings({ renderOptions }: Props) {
           // eslint-disable-next-line new-cap
           const doc = new jsPDF('p', 'in', [PAPER_WIDTH, PAPER_HEIGHT]);
 
-          const printCanvas = (canvas: HTMLCanvasElement) => {
+          const printCanvas = (canvas: HTMLCanvasElement, cuttingHelper: boolean) => {
             doc.addImage(canvas, 'png', xMargins, topMargin, PAPER_CHECK_WIDTH_INCH, PAPER_CHECK_HEIGHT_INCH);
-            if (printSettings.cuttingHelper) {
+            if (cuttingHelper) {
               doc.setLineDashPattern([0.1], 2);
               doc.setLineWidth(0.01);
               doc.line(0, topMargin, PAPER_WIDTH, topMargin);
@@ -90,9 +90,9 @@ export default function PrintSettings({ renderOptions }: Props) {
             }
           };
 
-          printCanvas(frontCanvas);
+          printCanvas(frontCanvas, printSettings.cuttingHelper);
           doc.addPage();
-          printCanvas(backCanvas);
+          printCanvas(backCanvas, false);
 
           const exportFilename = printSettings.filename.length > 0
             ? printSettings.filename
