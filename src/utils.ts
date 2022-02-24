@@ -138,7 +138,7 @@ export function useCheckCanvas({
 }
 
 export function loadImg(url?: string): Promise<HTMLImageElement | undefined> {
-  return new Promise((resolve, reject) => {
+  return new Promise((resolve) => {
     if (url == null) {
       resolve(undefined);
       return;
@@ -146,7 +146,7 @@ export function loadImg(url?: string): Promise<HTMLImageElement | undefined> {
     const imgLoader = new Image();
     imgLoader.crossOrigin = 'anonymous';
     imgLoader.onload = () => resolve(imgLoader);
-    imgLoader.onerror = () => reject();
+    imgLoader.onerror = () => resolve(undefined);
     imgLoader.src = url;
   });
 }
